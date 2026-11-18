@@ -1,0 +1,735 @@
+/* RNG Quest: The Daily Adventure. A bright parchment theme on top of style.css (which is the old game's dark theme). */
+:root {
+  --bg: #efe5d1; --panel: rgba(255, 251, 242, .92); --panel2: #f6eedd; --line: #dccdab; --ink: #3a3346; --dim: #8c8070;
+  --gold: #b0802a; --good: #3d8a4a; --bad: #b8503a; --info: #3f6fa8; --accent: #2f3d63; --navy: #2f3d63; --cream: #fffaf0;
+}
+html, body { background: radial-gradient(ellipse at 50% 0%, #fbf6ea 0%, #efe4cd 55%, #e3d4b6 100%) fixed; color: var(--ink);
+  font: 14px/1.5 'Nunito', 'Segoe UI', system-ui, sans-serif; }
+#app { max-width: 1100px; }
+h1, h2, h3, .verdict, .rank-badge, .dd-title { font-family: 'Cinzel', Georgia, serif; }
+h2 { color: var(--navy); font-size: 13px; letter-spacing: .12em; }
+h2::before { content: '✦ '; color: var(--gold); }
+small, .dim { color: var(--dim); }
+
+/* panels, buttons, pills */
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 6px 18px rgba(90, 66, 30, .12), inset 0 1px 0 #fff; }
+button { font-family: inherit; font-weight: 700; color: var(--navy); background: var(--cream); border: 1px solid #cdb88f; border-bottom-width: 1px; border-radius: 999px; padding: 5px 14px; box-shadow: 0 2px 0 rgba(90, 66, 30, .18); }
+button:hover:not(:disabled) { background: #fff; border-color: var(--gold); }
+button:active:not(:disabled) { margin-top: 0; transform: translateY(1px); box-shadow: none; }
+button.on, button.on:hover:not(:disabled) { background: var(--navy); color: var(--cream); border-color: var(--navy); }
+button.primary { background: var(--navy); color: var(--cream); border-color: var(--navy); }
+button.primary:hover:not(:disabled) { background: #3d4f80; }
+button.danger { background: #fbeee9; color: var(--bad); border-color: #e2b5a8; }
+button.sm { padding: 2px 10px; font-size: 12px; }
+.stat { background: var(--cream); border: 1px solid #d8c294; border-radius: 999px; padding: 4px 14px; box-shadow: 0 2px 6px rgba(90, 66, 30, .1); }
+.stat b { color: var(--gold); }
+#toast { background: var(--navy); border: 1px solid var(--gold); color: var(--cream); border-radius: 999px; }
+
+/* header */
+.dd-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 8px 0 14px; }
+.dd-head h1 { font-size: 26px; color: var(--navy); letter-spacing: .08em; text-shadow: 0 1px 0 #fff; }
+.dd-head h1 span { color: var(--gold); }
+.dd-head .sub { color: var(--dim); font-size: 12.5px; letter-spacing: .04em; }
+.dd-head .sp { flex: 1; }
+.dbg { opacity: .6; }
+.dbg:hover { opacity: 1; }
+
+.dd-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; }
+.dd-grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 860px) { .dd-grid, .dd-grid3 { grid-template-columns: 1fr; } }
+
+/* the dark scenes sit in the bright page like framed windows */
+.scene { border: 3px solid #fffaf0; outline: 1px solid #cdb88f; border-radius: 12px; box-shadow: 0 8px 22px rgba(60, 40, 10, .25); background: #000; }
+
+/* arrivals at dawn */
+.arrivals { background: linear-gradient(90deg, #fff7e0, #fffaf0); border: 1px solid #e6cf92; border-radius: 14px; padding: 10px 14px; font-size: 13.5px; }
+.arrivals b { color: var(--navy); }
+.arrivals .legend { color: var(--gold); font-weight: 800; }
+
+/* today's quest */
+.quest h3 { font-size: 17px; color: var(--navy); margin: 2px 0 8px; line-height: 1.3; }
+.quest .where { color: var(--accent); font-weight: 800; }
+.skulls { letter-spacing: 2px; font-size: 15px; }
+.skulls .on { color: #c0392b; } .skulls .off { color: #d9ccb0; }
+.quest .facts { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; margin-top: 8px; font-size: 13.5px; }
+.quest .facts > span:nth-child(odd) { color: var(--dim); }
+.everyone { margin-top: 12px; font-size: 12px; color: var(--dim); font-style: italic; }
+.loot { color: #a0701a; font-weight: 700; }
+
+/* winds of fate */
+.fate { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; background: radial-gradient(circle at 50% 30%, #fffdf6, var(--panel) 70%); }
+.fate canvas.die { width: 336px; max-width: 100%; height: auto; image-rendering: pixelated; }
+.fate .verdict { animation: verdict-pop .5s cubic-bezier(.2, 1.6, .4, 1); }
+@keyframes verdict-pop { from { transform: scale(.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.fate .verdict { font-size: 22px; font-weight: 700; letter-spacing: .1em; }
+.fate .math { color: var(--dim); font-size: 13px; }
+.fate .odds { font-size: 13.5px; }
+.fate .choices { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 4px; }
+button.big { font-size: 18px; padding: 11px 30px; letter-spacing: .06em; font-family: 'Cinzel', Georgia, serif; }
+button.adventure { background: linear-gradient(180deg, #f2a35a, #d27032); color: #fffaf0; border: 1px solid #b85a22; text-shadow: 0 1px 0 rgba(0, 0, 0, .25); }
+button.adventure:hover:not(:disabled) { background: linear-gradient(180deg, #f7b36e, #dc7c3c); border-color: #9a4a18; }
+button.rest { background: linear-gradient(180deg, #4a5d8f, #2f3d63); color: #fffaf0; border: 1px solid #25304e; }
+button.rest:hover:not(:disabled) { background: linear-gradient(180deg, #566aa0, #374772); }
+.banked { color: var(--info); font-size: 13px; font-weight: 700; }
+.v-doom { color: #b8302a; } .v-bad { color: #c9602a; } .v-mid { color: #8a7650; } .v-good { color: #3d8a4a; } .v-great { color: var(--gold); }
+.done-note { color: var(--dim); font-size: 13.5px; max-width: 340px; }
+
+/* heroes */
+.pcard { border: 1px solid #d8c9a6; box-shadow: 0 4px 12px rgba(90, 66, 30, .14); }
+.pcard .meta { font-size: 11px; color: #6a5f72; margin-top: 3px; }
+.pc-info .tag { background: #fffaf0; border: 1px solid #d8c9a6; border-radius: 999px; padding: 0 8px; }
+.pc-info .tag.goodtrait { color: #3d8a4a; } .pc-info .tag.badtrait { color: #b8503a; }
+.bar { background: #e9dfc9; border: 1px solid #cdb88f; border-radius: 999px; overflow: hidden; }
+.bar.xp i { background: linear-gradient(90deg, #6f8fe0, #8fb0f0); }
+.rank-badge { position: absolute; left: 8px; top: 24px; width: 26px; height: 26px; z-index: 1; border-radius: 50%; display: grid; place-items: center;
+  color: #fff; font-weight: 700; font-size: 15px; border: 2px solid #fffaf0; box-shadow: 0 2px 4px rgba(0, 0, 0, .25); text-shadow: 0 1px 0 rgba(0, 0, 0, .3); }
+.pcard.unique { border: 2px solid #e0a82e; box-shadow: 0 0 0 2px #fff3c4, 0 6px 16px rgba(176, 128, 42, .35); }
+.pcard.unique .pc-name { color: #8a5a00; border-color: #e0a82e; }
+.sig { display: inline-block; font-size: 11px; font-weight: 800; color: #8a5a00; background: #fff3c4; border: 1px solid #e0a82e; border-radius: 999px; padding: 0 7px; }
+.pcard .new { position: absolute; right: 6px; top: 26px; z-index: 1; background: var(--good); color: #fff; font-size: 10px; font-weight: 800; padding: 0 7px; border-radius: 999px; box-shadow: 0 1px 3px rgba(0, 0, 0, .25); }
+.pcard.empty { display: grid; place-items: center; min-height: 250px; border: 2px dashed #cdb88f; background: rgba(255, 250, 240, .5); color: var(--dim); font-style: italic; box-shadow: none; }
+
+/* lists */
+.rank { display: flex; gap: 8px; padding: 3px 6px; font-size: 13px; border-radius: 6px; }
+.rank .n { width: 26px; color: var(--dim); text-align: right; }
+.rank .who { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rank .pts { color: var(--gold); font-weight: 700; }
+.rank.you { background: #fff3c4; border: 1px solid #e0a82e; }
+.grave { font-size: 12.5px; padding: 5px 0; border-bottom: 1px dashed var(--line); }
+.grave b { color: var(--navy); }
+.hist { font-size: 12.5px; display: flex; gap: 8px; padding: 2px 0; }
+.hist .d { color: var(--dim); width: 84px; flex: none; }
+.empty { color: var(--dim); }
+
+/* log colours, readable on cream */
+.log { overflow-y: auto; background: rgba(255, 250, 235, .6); border: 1px solid #d8c294; border-radius: 10px; padding: 6px 10px; line-height: 1.4; }
+.log div { border-bottom: 1px dashed rgba(90, 66, 30, .12); padding: 2px 0; }
+.log div:last-child { border-bottom: 0; }
+.good { color: #3d8a4a; } .bad { color: #b8503a; } .info { color: #3f6fa8; } .death { color: #b8302a; font-weight: 800; }
+.heal { color: #2f8a6a; } .crit { color: #c9771a; font-weight: 700; } .boss { color: #7a4ab0; font-weight: 800; }
+
+/* adventure view */
+.watch .top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+.watch .top h3 { font-size: 16px; color: var(--navy); }
+.watch .rollbadge { background: var(--cream); border: 1px solid #d8c294; border-radius: 999px; padding: 2px 10px; font-weight: 800; }
+.watch .stage { position: relative; }
+.watch .log { margin-top: 10px; max-height: none; }   /* height set by fitLog() */
+.result { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(30, 24, 40, .35); border-radius: 12px; }
+.result .box { background: var(--cream); border: 1px solid #d8c294; border-radius: 16px; padding: 18px 26px; max-width: 460px; text-align: center; box-shadow: 0 10px 30px rgba(0, 0, 0, .3); }
+.result h2 { font-size: 22px; margin-bottom: 8px; }
+.result h2::before { content: ''; }
+.result .line { font-size: 13.5px; margin: 3px 0; }
+.result button { margin-top: 12px; }
+
+/* difficulty words, green to red */
+.diff { display: inline-block; font-weight: 800; letter-spacing: .04em; padding: 0 10px; border-radius: 999px; color: #fff; text-shadow: 0 1px 0 rgba(0, 0, 0, .25); }
+.diff.d1 { background: #4f9a5a; } .diff.d2 { background: #9aa03a; } .diff.d3 { background: #d08a2a; } .diff.d4 { background: #c9552e; } .diff.d5 { background: #9a1f2a; box-shadow: 0 0 0 2px #f2c4b8; }
+
+/* trophies */
+.trophy { display: inline-flex; align-items: center; gap: 5px; font-weight: 800; color: var(--rc); background: #fffaf0; border: 1px solid var(--rc); border-radius: 999px; padding: 0 10px 0 6px; }
+.trophy i, .tcell i { font-style: normal; }
+.thall { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px; margin-top: 10px; }
+.tcell { display: flex; align-items: center; gap: 6px; font-size: 12px; padding: 4px 8px; border-radius: 10px; border: 1px dashed #d9ccb0; color: #b8ab92; background: rgba(255, 250, 240, .5); }
+.tcell i { color: var(--rc); opacity: .35; }
+.tcell.got { border: 1px solid var(--rc); color: var(--ink); background: #fffaf0; font-weight: 700; box-shadow: 0 1px 3px rgba(90, 66, 30, .12); }
+.tcell.got i { opacity: 1; }
+.rank .tro { color: var(--dim); font-size: 12px; }
+
+/* daily summary */
+.summary { text-align: center; margin-bottom: 14px; border: 2px solid #e0c98a; }
+.summary h2 { font-size: 22px; margin-bottom: 8px; }
+.summary h2::before { content: ''; }
+.summary .line { margin: 4px 0; font-size: 14px; }
+.breakdown { display: grid; grid-template-columns: 1fr auto; gap: 2px 18px; max-width: 320px; margin: 10px auto; font-size: 13.5px; text-align: left; }
+.breakdown b { color: var(--gold); text-align: right; }
+.breakdown .tot { border-top: 1px solid var(--line); padding-top: 3px; font-weight: 800; color: var(--navy); }
+.breakdown b.tot { color: var(--gold); }
+.standings { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin: 12px 0; }
+.standings > div { background: var(--cream); border: 1px solid #d8c294; border-radius: 14px; padding: 8px 18px; min-width: 190px; box-shadow: 0 2px 6px rgba(90, 66, 30, .1); }
+.standings small { display: block; text-transform: uppercase; letter-spacing: .12em; font-size: 11px; }
+.standings b { display: block; font-family: 'Cinzel', Georgia, serif; font-size: 24px; color: var(--navy); }
+.standings span { font-size: 12.5px; color: var(--dim); }
+.next { margin: 12px 0 4px; font-size: 14px; color: var(--navy); }
+.next b { font-family: 'Cinzel', Georgia, serif; font-size: 20px; color: var(--gold); letter-spacing: .06em; }
+.summary button { margin-top: 10px; }
+.pcard .abil { font-size: 11px; font-weight: 800; color: var(--navy); margin-top: 3px; cursor: help; }
+
+/* roster: pick today's party, reroll a slot, fallen heroes until dawn */
+.roster { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+@media (max-width: 860px) { .roster { grid-template-columns: repeat(auto-fill, minmax(128px, 1fr)); } }
+.slot-wrap { display: flex; flex-direction: column; gap: 6px; }
+.slot-wrap .reroll { align-self: center; }
+.pcard.click { cursor: pointer; }
+.pcard.chosen { border: 2px solid var(--navy); box-shadow: 0 0 0 3px #c9d4f0, 0 6px 16px rgba(47, 61, 99, .3); }
+.pcard.unique.chosen { border-color: #e0a82e; box-shadow: 0 0 0 3px #fff3c4, 0 6px 16px rgba(176, 128, 42, .4); }
+.pcard .inparty { position: absolute; left: 50%; transform: translateX(-50%); bottom: 118px; z-index: 1; background: var(--navy); color: var(--cream); font-size: 10px; font-weight: 800; padding: 1px 8px; border-radius: 999px; white-space: nowrap; }
+.pcard.fallen { filter: grayscale(.85); opacity: .75; background: linear-gradient(180deg, #e2dccf, #d6cfc0) !important; }
+.pcard .fell { color: #8a2a2a; font-weight: 800; font-size: 12px; }
+.quest .decide { margin-top: 14px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.hint-line { font-size: 12.5px; color: var(--dim); font-style: italic; }
+button.reroll:disabled { opacity: .45; box-shadow: none; }
+
+/* pixel buttons that match the dice tray (frames are drawn in daily-main.js as 9-slice border images) */
+button.pix, button.pix:hover:not(:disabled), button.pix.adventure, button.pix.rest {
+  background: none; border-radius: 0; box-shadow: none; text-shadow: 0 3px 0 rgba(0, 0, 0, .35);
+  border: 12px solid transparent; border-image: var(--frame, var(--pix-rest)) 4 fill / 12px stretch; image-rendering: pixelated;
+  font-family: 'Silkscreen', ui-monospace, monospace; font-weight: 700; font-size: 17px; letter-spacing: .04em; line-height: 1.25;
+  color: #fff3c4; padding: 4px 12px; filter: drop-shadow(0 3px 0 rgba(60, 40, 10, .3));
+}
+button.pix.adventure { --frame: var(--pix-adv); }
+button.pix small { display: block; font-family: 'Silkscreen', ui-monospace, monospace; font-weight: 400; font-size: 10px; letter-spacing: .02em; color: #d8cfb4; margin-top: 3px; }
+button.pix:hover:not(:disabled) { filter: brightness(1.12) drop-shadow(0 3px 0 rgba(60, 40, 10, .3)); }
+button.pix:active:not(:disabled) { transform: translateY(3px); filter: drop-shadow(0 0 0 rgba(0, 0, 0, 0)); }
+button.pix:disabled { --frame: var(--pix-off); color: #ece4d0; opacity: .75; filter: none; cursor: not-allowed; }
+.choices { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; align-items: stretch; }
+.choices button.pix { width: 260px; max-width: 100%; }
+
+/* ===== layout: mobile first, one spacing scale for every panel =========================================== */
+:root { --sp: 12px; --sp-s: 8px; }
+@media (min-width: 700px) { :root { --sp: 16px; --sp-s: 10px; } }
+#app { max-width: 920px; padding: var(--sp) var(--sp) calc(var(--sp) * 4); }
+.stack { gap: var(--sp); }
+.dd-grid { gap: var(--sp); }
+.panel { padding: var(--sp); border-radius: 14px; box-shadow: 0 4px 14px rgba(90, 66, 30, .1), inset 0 1px 0 #fff; }
+.panel h2, .panel .row h2 { margin: 0 0 var(--sp-s); font-size: 12.5px; }
+.panel > .row { margin-bottom: var(--sp-s); gap: 4px var(--sp-s); }
+.panel > .row h2 { margin: 0; }
+.scene { border-width: 2px; border-radius: 12px; }
+.dd-grid, .dd-grid3 { grid-template-columns: 1fr; }
+@media (min-width: 700px) { .dd-grid { grid-template-columns: 1fr 1fr; } }
+
+/* header: title on the left, stats on the right; prototype buttons tucked underneath */
+.dd-head { padding: 0 0 var(--sp); gap: var(--sp-s); }
+.dd-head h1 { font-size: 22px; }
+.dd-head .stat { padding: 3px 12px; font-size: 13px; }
+.dd-head .dbg { font-size: 11px; padding: 1px 8px; }
+@media (max-width: 520px) { .dd-head > div:first-child { flex: 1 0 100%; } .dd-head .sp { display: none; } }
+
+/* winds of fate */
+.fate { gap: var(--sp-s); }
+.fate canvas.die { width: 100%; max-width: 336px; }
+.fate .verdict { font-size: 20px; }
+
+/* heroes: the party is always three, so three cards a row on wider screens (phones get full-width rows below) */
+.roster { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-s); }
+@media (min-width: 700px) { .roster { gap: var(--sp); max-width: 640px; margin: 0 auto; } }
+.slot-wrap { gap: 6px; }
+.roster .pcard { padding: 5px 5px 7px; border-radius: 12px; }
+.roster .pc-stage { height: 104px; margin-top: 12px; }
+.roster .pc-stage img.spr { width: 60px; height: 83px; margin-left: -30px; bottom: 14px; }
+.roster .pc-stage .tile { width: 70px; height: 35px; margin-left: -35px; }
+.roster .pc-name { font-size: 12px; padding: 1px 3px; }
+.roster .pc-info { font-size: 10.5px; margin-top: 4px; }
+.roster .pc-class { font-size: 9px; left: 5px; top: 4px; max-width: calc(100% - 44px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.roster .pc-lvl { font-size: 10px; right: 5px; top: 3px; }
+.roster .rank-badge { width: 22px; height: 22px; font-size: 13px; top: 20px; left: 6px; }
+.roster .meta, .roster .abil { font-size: 10px; }
+.roster .pcard .inparty { bottom: 98px; font-size: 9px; }
+.roster .pcard .new { top: 22px; right: 5px; }
+.roster .pcard.fallen .pc-info small { font-size: 10px; line-height: 1.3; }
+@media (min-width: 700px) {
+  .roster .pc-stage { height: 118px; } .roster .pc-stage img.spr { width: 72px; height: 99px; margin-left: -36px; bottom: 16px; }
+  .roster .pc-stage .tile { width: 84px; height: 42px; margin-left: -42px; } .roster .pcard .inparty { bottom: 112px; }
+}
+.slot-wrap .reroll { font-size: 11px; padding: 2px 10px; }
+
+/* today's quest: facts, then the decision centred underneath */
+.quest h3 { font-size: 16px; margin: 0 0 var(--sp-s); }
+.quest .facts { gap: 4px var(--sp); font-size: 13.5px; margin: 0; }
+.quest .decide { margin-top: var(--sp); align-items: center; text-align: center; gap: var(--sp-s); }
+.choices { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--sp-s); width: 100%; }
+.choices button.pix { width: 260px; max-width: 100%; }
+@media (max-width: 600px) { .choices { flex-direction: column; align-items: center; } .choices button.pix { width: 100%; max-width: 340px; } }
+
+/* trophy hall, lists */
+.thall { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; margin: 0; }
+@media (min-width: 700px) { .thall { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.tcell { padding: 4px 8px; min-width: 0; } .tcell span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rank { padding: 3px 6px; }
+.hist { flex-wrap: wrap; gap: 2px 8px; }
+
+/* adventure view and summary */
+.watch .top { margin-bottom: var(--sp-s); gap: var(--sp-s); }
+.watch .top h3 { font-size: 15px; flex: 1 1 100%; }
+@media (min-width: 700px) { .watch .top h3 { flex: 0 1 auto; } }
+.watch .log { margin-top: var(--sp-s); font-size: 12.5px; }
+.summary { margin: 0; }
+.summary .standings { gap: var(--sp-s); }
+.summary .standings > div { min-width: 0; flex: 1 1 140px; padding: 8px 10px; }
+.summary .standings b { font-size: 20px; }
+.breakdown { gap: 2px var(--sp); }
+.arrivals { margin-bottom: var(--sp-s); padding: var(--sp-s) var(--sp); }
+/* the throw needs headroom above the tray; let it overlap the panel title instead of leaving an empty band */
+.fate { position: relative; }
+.fate canvas.die { margin-top: calc(min(100%, 336px) * -0.27); position: relative; z-index: 0; pointer-events: none; }
+.fate h2 { position: relative; z-index: 1; }
+
+/* ===== centred, game-screen style (most players are on phones) ========================================== */
+.dd-head { flex-direction: column; align-items: center; text-align: center; gap: 6px; }
+.dd-head .sp { display: none; }
+.dd-head > div:first-child { flex: none; }
+.dd-head .stats { display: flex; gap: var(--sp-s); justify-content: center; flex-wrap: wrap; }
+.dd-head .dbgs { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; max-width: 100%; }
+.panel h2, .panel .row h2 { text-align: center; }
+.panel > .row { flex-direction: column; align-items: center; text-align: center; }
+.panel > .row .sp { display: none; }
+.quest { text-align: center; }
+.quest h3 { text-align: center; }
+.quest .facts { display: inline-grid; text-align: left; margin: 0 auto; }
+.arrivals { text-align: center; }
+.summary .breakdown { margin-left: auto; margin-right: auto; }
+.pcard .pc-info, .pcard .meta { text-align: center; }
+.qtrophy { display: flex; flex-direction: column; align-items: center; gap: 3px; margin-top: var(--sp-s); }
+
+/* ===== heroes on phones: one full-width row per hero (sprite left, details right, reroll in the corner) ====== */
+.pc-sub { display: none; }
+@media (max-width: 699px) {
+  .roster { grid-template-columns: 1fr; gap: var(--sp-s); }
+  .slot-wrap { position: relative; }
+  .roster .pcard { display: grid; grid-template-columns: 76px 1fr; column-gap: 12px; align-items: center; text-align: left; padding: 8px 12px 8px 8px; min-height: 104px; }
+  .roster .pc-class, .roster .pc-lvl { display: none; }
+  .roster .pc-stage { grid-column: 1; grid-row: 1 / span 3; height: 96px; margin: 0; }
+  .roster .pc-stage img.spr { width: 60px; height: 83px; margin-left: -30px; bottom: 10px; }
+  .roster .pc-stage .tile { width: 68px; height: 34px; margin-left: -34px; bottom: 2px; }
+  .roster .pc-stage .tile.t2 { bottom: -4px; }
+  .roster .pc-name { grid-column: 2; text-align: left; background: none; border: none; padding: 0; font-size: 15px; font-weight: 800; color: var(--navy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 64px; }
+  .roster .pcard.unique .pc-name { color: #8a5a00; }
+  .roster .pc-sub { display: block; grid-column: 2; font-size: 12px; color: #5a4f6a; font-weight: 700; }
+  .roster .pc-info { grid-column: 2; text-align: left; margin: 2px 0 0; font-size: 12px; padding-right: 0; }
+  .roster .pc-info .abil { font-size: 12px; margin: 2px 0 4px; }
+  .roster .pc-info .meta { text-align: left; font-size: 11px; }
+  .roster .pc-info .bar.xp { max-width: 160px; }
+  .roster .rank-badge { top: 8px; left: 8px; width: 22px; height: 22px; font-size: 13px; }
+  .roster .pcard .inparty { bottom: auto; top: 8px; left: auto; right: 10px; transform: none; font-size: 10px; }
+  .roster .pcard .new { top: 30px; right: 10px; }
+  .roster .pcard.fallen .pc-info { padding-right: 0; }
+  .slot-wrap .reroll { position: absolute; right: 10px; bottom: 9px; }
+  .roster .pcard:not(.fallen) .pc-info .meta { padding-right: 92px; }
+  .roster .pcard.chosen { box-shadow: 0 0 0 2px #c9d4f0, 0 4px 12px rgba(47, 61, 99, .25); }
+}
+
+/* rerolling: one control for the whole roster, then tap the hero to replace */
+.reroll-bar { display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; margin: 0 0 var(--sp-s); }
+.reroll-bar.active { flex-direction: row; justify-content: space-between; gap: var(--sp-s); text-align: left; background: #fff3c4; border: 1px dashed #d4961a; border-radius: 12px; padding: var(--sp-s) var(--sp); }
+.reroll-bar.active small { color: #6a5a3a; }
+.pcard.replacing { opacity: 1 !important; outline: 2px dashed #d4961a; outline-offset: 2px; }
+.pcard .replace-tag { position: absolute; z-index: 2; right: 8px; top: 8px; background: #d4961a; color: #fff; font-size: 10.5px; font-weight: 800; padding: 1px 9px; border-radius: 999px; box-shadow: 0 1px 3px rgba(0, 0, 0, .25); }
+@media (min-width: 700px) { .pcard .replace-tag { top: auto; bottom: 116px; left: 50%; right: auto; transform: translateX(-50%); } }
+.slot-wrap .reroll { display: none; }
+.roster .pcard:not(.fallen) .pc-info .meta { padding-right: 0; }
+.roster .pc-name { padding-right: 70px; }
+#toast { border-radius: 14px; max-width: min(90vw, 420px); width: max-content; text-align: center; padding: 10px 18px; font-size: 14px; line-height: 1.4; bottom: 20px; box-shadow: 0 8px 24px rgba(0, 0, 0, .3); }
+/* fallen heroes: a plain black "Dead" tag */
+.dead-tag { display: inline-block; background: #111; color: #fff; font-weight: 800; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; padding: 2px 12px; border-radius: 4px; margin: 2px 0 4px; }
+.pcard.fallen .dawn { display: block; font-size: 11px; color: #4a4450; line-height: 1.35; }
+/* fallen cards: grey the contents, not the whole card, so the DEAD tag stays pure black and white */
+.pcard.fallen { filter: none; opacity: 1; background: linear-gradient(180deg, #e6e1d6, #d9d3c6) !important; }
+.pcard.fallen .pc-stage, .pcard.fallen .rank-badge { filter: grayscale(1); opacity: .7; }
+.pcard.fallen .pc-name, .pcard.fallen .pc-sub { color: #6a6470 !important; }
+.dead-tag { background: #000; color: #fff; }
+
+/* ===== type scale: body 16px, nothing under 12px, headings and numbers stepped up in proportion ============ */
+html, body { font-size: 16px; line-height: 1.5; }
+small { font-size: 13px; }
+.dd-head h1 { font-size: 28px; }
+.dd-head .sub { font-size: 13.5px; }
+.dd-head .stat { font-size: 15px; padding: 4px 14px; }
+.dd-head .dbg { font-size: 12px; }
+.panel h2, .panel .row h2 { font-size: 14.5px; letter-spacing: .12em; }
+.panel > .row small, .reroll-bar small { font-size: 13.5px; }
+.fate .verdict { font-size: 26px; }
+.fate .math { font-size: 15px; }
+.quest h3 { font-size: 19px; line-height: 1.3; }
+.quest .facts { font-size: 15.5px; }
+.diff { font-size: 14px; padding: 1px 12px; }
+.qtrophy small { font-size: 13.5px; }
+.trophy { font-size: 14.5px; }
+.odds, .done-note { font-size: 15px; }
+.hint-line { font-size: 13.5px; }
+.next { font-size: 15px; } .next b { font-size: 24px; }
+button.pix, button.pix:hover:not(:disabled), button.pix.adventure, button.pix.rest { font-size: 19px; }
+button.pix small { font-size: 12px; }
+button.sm { font-size: 13px; padding: 3px 12px; }
+.arrivals { font-size: 14.5px; }
+.tcell { font-size: 13px; }
+.rank { font-size: 14.5px; } .rank .tro { font-size: 13px; }
+.hist { font-size: 14px; }
+.summary .line { font-size: 15px; }
+.breakdown { font-size: 15px; }
+.summary .standings small { font-size: 12px; } .summary .standings b { font-size: 26px; } .summary .standings span { font-size: 13.5px; }
+.watch .top h3 { font-size: 17px; }
+.watch .log { font-size: 14px; }
+#toast { font-size: 15px; }
+
+/* ===== hero names: clean centred text, no plate =============================================================== */
+.pcard .pc-name, .roster .pc-name { background: none; border: none; padding: 0; text-align: center; font-weight: 800; color: var(--navy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pcard.unique .pc-name { color: #8a5a00; }
+.pcard .pc-name { font-size: 16px; margin-top: 2px; }
+.roster .pc-info .abil { font-size: 13px; }
+.roster .pc-info .meta { font-size: 12.5px; }
+.roster .pc-class { font-size: 11px; } .roster .pc-lvl { font-size: 12px; }
+.roster .rank-badge { width: 24px; height: 24px; font-size: 14px; }
+.pcard .inparty, .pcard .new, .pcard .replace-tag { font-size: 12px; }
+.dead-tag { font-size: 13px; }
+.pcard.fallen .dawn { font-size: 12.5px; }
+
+/* phone rows: details centred in the right-hand column; party/replace tags sit under the sprite */
+@media (max-width: 699px) {
+  .roster .pcard { grid-template-columns: 84px 1fr; min-height: 118px; padding: 10px 12px 10px 8px; }
+  .roster .pc-stage { height: 104px; }
+  .roster .pc-name { padding: 0; font-size: 18px; text-align: center; }
+  .roster .pc-sub { text-align: center; font-size: 13.5px; }
+  .roster .pc-info { text-align: center; font-size: 13px; }
+  .roster .pc-info .abil { font-size: 14px; margin: 3px 0 5px; }
+  .roster .pc-info .meta { text-align: center; font-size: 13px; }
+  .roster .pc-info .bar.xp { max-width: 180px; margin-left: auto; margin-right: auto; }
+  .roster .pcard .inparty, .roster .pcard .replace-tag { top: auto; bottom: 6px; left: 8px; right: auto; transform: none; width: 84px; text-align: center; padding: 1px 0; }
+  .roster .pcard .new { top: 8px; right: 10px; }
+  .dead-tag { font-size: 14px; }
+}
+
+/* new heroes arrive face down: a sealed card in the dice tray's navy and gold, flipped by tapping */
+.pcard.sealed { background: radial-gradient(circle at 50% 40%, #34426a, #232c48) !important; border: 2px solid #c9a03a; box-shadow: inset 0 0 0 3px #232c48, inset 0 0 0 4px #8a6a1a, 0 6px 16px rgba(35, 44, 72, .35);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 230px; color: #fff3c4; text-align: center; opacity: 1 !important; animation: seal-breathe 2.4s ease-in-out infinite; }
+.pcard.sealed .seal-q { font-family: 'Silkscreen', ui-monospace, monospace; font-size: 54px; line-height: 1; color: #f0d070; text-shadow: 0 4px 0 #6a4a10; }
+.pcard.sealed .seal-t { font-family: 'Cinzel', Georgia, serif; font-weight: 700; font-size: 16px; margin-top: 10px; letter-spacing: .08em; }
+.pcard.sealed .seal-s { font-size: 13px; color: #d8cfb4; margin-top: 2px; }
+@keyframes seal-breathe { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+@media (max-width: 699px) { .roster .pcard.sealed { display: flex; min-height: 118px; flex-direction: row; gap: 14px; } .pcard.sealed .seal-q { font-size: 44px; } .pcard.sealed .seal-t { margin-top: 0; } }
+@media (max-width: 699px) { .pcard.sealed .seal-t + .seal-s { margin-top: 0; } .roster .pcard.sealed > div:not(.seal-q) { text-align: left; } }
+.pcard.flip-in { animation: flip-in .6s cubic-bezier(.2, 1.4, .4, 1); }
+@keyframes flip-in { from { transform: perspective(600px) rotateY(90deg) scale(.9); } to { transform: perspective(600px) rotateY(0) scale(1); } }
+.pcard.flip-in.rank-S { animation: flip-in .6s cubic-bezier(.2, 1.4, .4, 1), legend-glow 1.4s ease-out; }
+.pcard.flip-in.rank-A { animation: flip-in .6s cubic-bezier(.2, 1.4, .4, 1), a-glow 1.2s ease-out; }
+@keyframes legend-glow { 0% { box-shadow: 0 0 0 0 rgba(255, 210, 58, .9); } 60% { box-shadow: 0 0 0 14px rgba(255, 210, 58, 0); } 100% { box-shadow: 0 0 0 2px #fff3c4; } }
+@keyframes a-glow { 0% { box-shadow: 0 0 0 0 rgba(166, 95, 208, .8); } 100% { box-shadow: 0 0 0 12px rgba(166, 95, 208, 0); } }
+.pcard.sealed .seal-txt { text-align: center; }
+@media (max-width: 699px) { .roster .pcard.sealed .seal-txt { text-align: left; } .roster .pcard.sealed .seal-t { margin-top: 0; } }
+@media (max-width: 699px) { button.pix, button.pix:hover:not(:disabled), button.pix.adventure, button.pix.rest { font-size: 17px; } }
+button.pix.roll { width: 260px; max-width: 100%; white-space: nowrap; }
+
+/* ===== the summon (gacha) overlay ======================================================================== */
+.gacha { position: fixed; inset: 0; z-index: 50; display: none; align-items: center; justify-content: center; padding: var(--sp);
+  background: radial-gradient(circle at 50% 40%, rgba(42, 53, 86, .96), rgba(14, 12, 24, .97)); }
+.gacha.open { display: flex; }
+body.no-scroll { overflow: hidden; }
+.g-inner { width: 100%; max-width: 420px; max-height: 100%; overflow-y: auto; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; color: #fff3c4; }
+.g-inner > * { flex-shrink: 0; }
+.g-title { font-family: 'Cinzel', Georgia, serif; font-weight: 700; font-size: 18px; letter-spacing: .12em; text-transform: uppercase; color: #f0d070; }
+/* the circle shrinks to whatever height the text and buttons leave, so the result always fits on one screen */
+.g-inner > .g-canvas { flex: 0 1 auto; min-height: 140px; height: min(396px, calc((100vw - 2 * var(--sp)) * 1.1)); width: auto; max-width: 100%; object-fit: contain; image-rendering: pixelated; }
+.g-info { display: flex; flex-direction: column; align-items: center; gap: 4px; min-height: 8px; }
+.g-hint { color: #d8cfb4; font-size: 15px; font-style: italic; }
+.g-legend { font-family: 'Silkscreen', ui-monospace, monospace; font-weight: 700; font-size: 20px; color: #ffd23a; letter-spacing: .1em; text-shadow: 0 0 12px rgba(255, 210, 58, .8); animation: verdict-pop .6s cubic-bezier(.2, 1.6, .4, 1); }
+.g-rank { font-family: 'Silkscreen', ui-monospace, monospace; font-weight: 700; font-size: 15px; color: #fff; padding: 2px 14px; border-radius: 4px; text-shadow: 0 2px 0 rgba(0, 0, 0, .3); animation: verdict-pop .5s cubic-bezier(.2, 1.6, .4, 1); }
+.g-name { font-family: 'Cinzel', Georgia, serif; font-weight: 700; font-size: 28px; color: #fff; line-height: 1.1; }
+.g-name.u { color: #ffd23a; }
+.g-class { font-size: 15px; color: #d8cfb4; font-weight: 700; }
+.g-sig { font-size: 14px; color: #ffd23a; font-weight: 800; max-width: 340px; }
+.g-abil { font-size: 14px; color: #e8e0cc; max-width: 340px; line-height: 1.4; }
+.g-actions { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; margin-top: 4px; }
+.g-choose { font-size: 15px; font-weight: 700; color: #fff3c4; }
+/* your three heroes side by side, like the party itself; tap one to swap it for the new hero */
+.g-slots { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; width: 100%; max-width: 400px; }
+/* each hero is a pixel button too: a cream frame (grey for the dead) with an orange Replace plate */
+button.g-slot, button.g-slot:hover:not(:disabled) { display: flex; flex-direction: column; align-items: center; gap: 1px; min-width: 0; text-align: center; color: var(--navy);
+  background: none; border: 8px solid transparent; border-image: var(--frame, var(--pix-cream)) 4 fill / 8px stretch; border-radius: 0; image-rendering: pixelated;
+  padding: 0 0 1px; box-shadow: none; filter: drop-shadow(0 3px 0 rgba(0, 0, 0, .35)); }
+button.g-slot:hover:not(:disabled) { filter: brightness(1.06) drop-shadow(0 3px 0 rgba(0, 0, 0, .35)); }
+button.g-slot:active:not(:disabled) { transform: translateY(3px); filter: none; }
+.g-slot b, .g-slot span { max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.g-slot b { font-size: 15px; } .g-slot span { font-size: 12px; color: #5a4f6a; font-weight: 600; line-height: 1.35; }
+.g-slot i { margin-top: auto; padding: 0 4px; font-style: normal; font-family: 'Silkscreen', ui-monospace, monospace; font-weight: 700; font-size: 12px; line-height: 1.3; color: #fff3c4;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, .35); border: 8px solid transparent; border-image: var(--pix-adv) 4 fill / 8px stretch; image-rendering: pixelated; }
+.g-slot span:last-of-type { margin-bottom: 6px; }
+button.g-slot.dead { --frame: var(--pix-ash); } .g-slot.dead span.dd { color: #000; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+
+/* the winds of fate, inside today's quest: a small heading, the dice tray, then the verdict */
+.winds { display: flex; flex-direction: column; align-items: center; gap: var(--sp-s); width: 100%; }
+.w-label { font-family: 'Cinzel', Georgia, serif; font-weight: 700; font-size: 14.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--navy); }
+.w-label::before { content: '✦ '; color: var(--gold); }
+.winds > [data-canvas] { width: 100%; max-width: 336px; }
+/* the throw needs headroom above the tray; the die flies in over the heading instead of leaving an empty band */
+.winds canvas.die { position: relative; z-index: 1; display: block; width: 100%; height: auto; image-rendering: pixelated; margin: -22% 0 -2%; pointer-events: none; }
+.winds .verdict { font-size: 26px; font-weight: 700; letter-spacing: .1em; line-height: 1.2; animation: verdict-pop .5s cubic-bezier(.2, 1.6, .4, 1); }
+.winds .math { color: var(--dim); font-size: 15px; margin-top: -4px; }
+.rolled { font-size: 15px; color: var(--dim); }
+.rolled b { font-family: 'Cinzel', Georgia, serif; letter-spacing: .04em; }
+
+/* summon bar on the home screen */
+.summon-bar { display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; margin: 0 0 var(--sp); }
+.summon-bar small { font-size: 13.5px; max-width: 360px; }
+.summon-bar.first { padding: var(--sp) 0; }
+.summon-bar .sb-title { font-family: 'Cinzel', Georgia, serif; font-weight: 700; font-size: 20px; color: var(--navy); }
+.summon-bar button.pix { width: 260px; max-width: 100%; }
+.summon-bar.used small { color: var(--dim); }
+
+/* ===== every button is a pixel button: sizes and colours (frames are drawn in daily-main.js) ============= */
+button.pix.danger { --frame: var(--pix-red); }
+/* small: the same frame at 2x instead of 3x, so the pixels stay crisp */
+button.pix.sm, button.pix.sm:hover:not(:disabled) { border-width: 8px; border-image-width: 8px; font-size: 13px; line-height: 1.3; padding: 1px 8px; text-shadow: 0 2px 0 rgba(0, 0, 0, .35); }
+button.pix.sm:not(:hover) { filter: drop-shadow(0 2px 0 rgba(60, 40, 10, .3)); }
+button.pix.sm:active:not(:disabled) { transform: translateY(2px); }
+button.pix:disabled { --frame: var(--pix-off); }
+.dd-head .dbgs { align-items: center; }
+.summary button.pix.big { width: 260px; max-width: 100%; }
+.g-actions button.pix.sm, .g-actions button.pix.sm:hover:not(:disabled) { font-size: 14px; padding: 2px 12px; }
+/* the note under Adventure! / Wait until tomorrow */
+.choices + .hint-line { max-width: 340px; }
+/* the chance to clear: the number the whole choice hangs on, big and coloured by how good it is */
+.odds { display: flex; flex-direction: column; align-items: center; gap: 0; margin-top: 4px; }
+.odds small { font-size: 15px; color: var(--ink); max-width: 300px; line-height: 1.35; }
+.odds .pct { font-family: 'Cinzel', Georgia, serif; font-weight: 700; font-size: 54px; line-height: 1.1; letter-spacing: .02em; text-shadow: 0 3px 0 rgba(60, 40, 10, .18);
+  animation: verdict-pop .5s cubic-bezier(.2, 1.6, .4, 1); }
+.odds .pct.low { color: #b8302a; } .odds .pct.mid { color: #c9771a; } .odds .pct.high { color: #3d8a4a; }
+.risk { font-family: 'Cinzel', Georgia, serif; font-weight: 700; font-size: 18px; color: var(--navy); margin-top: 2px; }
+
+/* ===== the result of an adventure: a card over the dimmed dungeon, so the page never jumps ================ */
+.r-overlay { position: fixed; inset: 0; z-index: 40; display: none; align-items: center; justify-content: center; padding: var(--sp); background: rgba(20, 16, 30, .6); }
+.r-overlay.open { display: flex; animation: r-fade .4s ease-out; }
+.r-card { width: 100%; max-width: 460px; max-height: 100%; overflow-y: auto; border-radius: 14px; box-shadow: 0 18px 44px rgba(0, 0, 0, .45); animation: r-pop .5s cubic-bezier(.2, 1.3, .4, 1); }
+.r-overlay .summary { margin: 0; background: #fffbf2; box-shadow: none; }
+@keyframes r-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes r-pop { from { opacity: 0; transform: translateY(28px) scale(.94); } to { opacity: 1; transform: none; } }
+.summary .s-trophy { display: flex; flex-direction: column; align-items: center; gap: 4px; margin: 2px 0 6px; font-size: 15px; }
+.summary .s-trophy small { font-size: 13.5px; }
+
+/* ===== clear time: a live clock in the dungeon, the time and its bonus on the result card ================= */
+.quest .facts small.fast { display: block; font-size: 13px; color: var(--dim); line-height: 1.3; }
+.watch .top .clock { margin-left: auto; font-family: 'Silkscreen', ui-monospace, monospace; font-weight: 700; font-size: 16px; color: var(--navy);
+  background: var(--cream); border: 1px solid #d8c294; border-radius: 999px; padding: 1px 12px; font-variant-numeric: tabular-nums; }
+.watch .top .clock.stopped { background: #e8f4e3; border-color: #8fc08a; color: #2f6e3a; }
+.summary .s-clock { display: flex; flex-direction: column; align-items: center; gap: 2px; margin: 0 0 8px; }
+.summary .s-clock > b { font-family: 'Silkscreen', ui-monospace, monospace; font-size: 30px; line-height: 1.1; color: var(--navy); }
+.summary .s-clock small { font-size: 14px; }
+.sw { font-family: 'Silkscreen', ui-monospace, monospace; font-weight: 700; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; color: #fff;
+  padding: 1px 12px; border-radius: 4px; text-shadow: 0 2px 0 rgba(0, 0, 0, .3); }
+.sw-blazing { background: #d4961a; box-shadow: 0 0 0 2px #fff3c4, 0 0 12px rgba(212, 150, 26, .6); } .sw-swift { background: #3d8a4a; } .sw-steady { background: #3f6fa8; } .sw-slow { background: #8a8478; }
+
+/* ===== rank on hero cards: the whole card wears its rank colour ========================================== */
+.pcard[class*="rank-"] { border: 3px solid var(--rk);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--rk) 30%, #fffaf0) 0%, color-mix(in srgb, var(--rk) 12%, #fffaf0) 55%, #fffaf0 100%); }
+.pcard.rank-A { box-shadow: 0 0 0 1px #fff, 0 0 16px rgba(166, 95, 208, .55), 0 4px 12px rgba(90, 66, 30, .14); }
+.pcard.rank-S { box-shadow: 0 0 0 2px #fff3c4, 0 0 22px rgba(224, 168, 46, .7), 0 4px 12px rgba(90, 66, 30, .14); animation: rank-s-glow 2.6s ease-in-out infinite; }
+@keyframes rank-s-glow { 50% { box-shadow: 0 0 0 2px #fff3c4, 0 0 30px rgba(255, 200, 60, .95), 0 4px 12px rgba(90, 66, 30, .14); } }
+.pcard .pc-stage .tile { background: linear-gradient(135deg, color-mix(in srgb, var(--rk, #e6e0d2) 25%, #fff), color-mix(in srgb, var(--rk, #cfc7b6) 60%, #e6e0d2)); }
+.pcard .pc-stage .tile.t2 { background: color-mix(in srgb, var(--rk, #9a917f) 70%, #4a4258); }
+.pc-sub b.rk { color: color-mix(in srgb, var(--rk) 85%, #000); font-weight: 800; }
+/* the badge: a pixel plate in the rank colour, like the buttons */
+.pcard .rank-badge, .roster .pcard .rank-badge { width: 36px; height: 36px; border-radius: 0; border: 8px solid transparent; border-image: var(--pix-rk-C) 4 fill / 8px stretch;
+  background: none !important; box-shadow: none; image-rendering: pixelated; display: grid; place-items: center; padding: 0;
+  font-family: 'Silkscreen', ui-monospace, monospace; font-weight: 700; font-size: 19px; line-height: 1; color: #fff; text-shadow: 0 2px 0 rgba(0, 0, 0, .45); }
+.pcard.rank-S .rank-badge { color: #6a4a00; text-shadow: 0 1px 0 #fff3c4; }
+/* the dead lose their colour */
+.pcard.fallen { border-color: #a9a39a; box-shadow: none; animation: none; }
+
+/* ===== rank during the summon ============================================================================ */
+/* the screen glows in the tier colour the charge has reached, then in the rank colour of the hero */
+.gacha { background: radial-gradient(circle at 50% 36%, color-mix(in srgb, var(--g-col, #2a3556) 55%, #1b2240) 0%, color-mix(in srgb, var(--g-col, #2a3556) 18%, #10101e) 55%, #0e0c18 100%); }
+/* the circle stays put while the text under it changes */
+.g-inner { height: 100%; justify-content: flex-start; }
+.g-title { margin-top: clamp(0px, 3vh, 32px); }
+.g-head { display: flex; align-items: center; gap: 14px; text-align: left; animation: verdict-pop .5s cubic-bezier(.2, 1.6, .4, 1); }
+.g-head .g-rank { flex: none; width: 72px; height: 72px; padding: 0; border-radius: 0; border: 12px solid transparent; border-image: var(--pix-rk-C) 4 fill / 12px stretch; image-rendering: pixelated;
+  background: none; display: grid; place-items: center; font-family: 'Silkscreen', ui-monospace, monospace; font-weight: 700; font-size: 40px; line-height: 1; color: #fff;
+  text-shadow: 0 3px 0 rgba(0, 0, 0, .45); filter: drop-shadow(0 0 14px var(--rk)); animation: none; }
+.g-head.rk-S .g-rank { color: #6a4a00; text-shadow: 0 2px 0 #fff3c4; }
+.g-head .g-name { text-align: left; }
+.g-head .g-class { text-align: left; }
+.g-head .g-class b { color: color-mix(in srgb, var(--rk) 70%, #fff); font-weight: 800; }
+/* wider screens: big pixel buttons stay on one line; the two choices share one width */
+@media (min-width: 601px) {
+  button.pix.big { white-space: nowrap; }
+  .summon-bar button.pix { width: auto; min-width: 260px; }
+  .choices { display: inline-grid; grid-template-columns: 1fr 1fr; width: auto; }
+  .choices button.pix { width: auto; min-width: 260px; }
+}
+.g-slot b.rk { font-size: inherit; color: color-mix(in srgb, var(--rk) 85%, #000); font-weight: 800; }
+
+/* ===== the world behind the panels: a sunny pixel-art valley around the Pit, lightly faded so the panels stay the focus == */
+html { background: #000; }
+body { background: transparent; }
+/* the user's call: the picture at 50% over black, so it sits well back behind the panels */
+body::before { content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none; image-rendering: pixelated;
+  background: url('../assets/bg/valley.png') center 40% / cover no-repeat; opacity: .5; }
+.panel { background: rgba(255, 251, 242, .985); box-shadow: 0 6px 20px rgba(10, 6, 20, .35), inset 0 1px 0 #fff; }
+
+/* ===== everything outside the panels: big white pixel letters with a dark pixel outline ===================== */
+.dd-head { --ol: #1d1626; }
+.dd-head h1, .dd-head h1 span, .dd-head .sub, .dd-head .stat, .dd-head .stat b {
+  font-family: 'Silkscreen', ui-monospace, monospace; color: #fff; }
+.dd-head h1 { font-size: 46px; font-weight: 700; line-height: 1; letter-spacing: .06em; margin-top: 6px;
+  text-shadow: 3px 0 var(--ol), -3px 0 var(--ol), 0 3px var(--ol), 0 -3px var(--ol), 3px 3px var(--ol), -3px 3px var(--ol), 3px -3px var(--ol), -3px -3px var(--ol), 0 7px rgba(0, 0, 0, .35); }
+.dd-head .sub, .dd-head .stat { text-shadow: 2px 0 var(--ol), -2px 0 var(--ol), 0 2px var(--ol), 0 -2px var(--ol), 2px 2px var(--ol), -2px 2px var(--ol), 2px -2px var(--ol), -2px -2px var(--ol), 0 4px rgba(0, 0, 0, .3); }
+.dd-head .sub { font-size: 15px; letter-spacing: .06em; text-transform: uppercase; }
+.dd-head .stat, .dd-head .stat:hover { background: none; border: none; box-shadow: none; padding: 0 8px; font-size: 16px; text-transform: uppercase; letter-spacing: .04em; }
+.dd-head .stat b { font-size: 22px; font-weight: 700; margin-left: 4px; }
+.dd-head .stats { gap: 6px 18px; align-items: baseline; }
+@media (max-width: 420px) { .dd-head h1 { font-size: 40px; } .dd-head .stat { font-size: 15px; } .dd-head .stat b { font-size: 20px; } }
+/* hero portraits keep their own width (a four-legged hero is wider): size by height, centre on the stage */
+.pc-stage img.spr, .roster .pc-stage img.spr { width: auto !important; margin-left: 0 !important; transform: translateX(-50%); }
+/* the title is longer since the rename to RNG Quest: keep it on one line on narrow phones */
+.dd-head h1 { text-transform: uppercase; white-space: nowrap; }
+@media (max-width: 420px) { .dd-head h1 { font-size: 36px; } }
+@media (max-width: 340px) { .dd-head h1 { font-size: 30px; } }
+
+/* ===== the dive: today's line, health and mana on hero cards, the party on the floor result =================== */
+.dayline { font-size: 15px; color: var(--ink); }
+.dayline .loot { font-weight: 800; }
+.vitals { display: flex; flex-direction: column; gap: 2px; margin: 4px 0 2px; }
+.vital { display: grid; grid-template-columns: 24px 1fr auto; align-items: center; gap: 6px; font-size: 12px; }
+.vital > span { font-family: 'Silkscreen', ui-monospace, monospace; font-weight: 700; color: var(--dim); font-size: 12px; text-align: left; }
+.vital small { font-size: 12px; color: var(--dim); min-width: 44px; text-align: right; font-variant-numeric: tabular-nums; }
+.bar.hp, .bar.mp { height: 8px; }
+.bar.hp i { display: block; height: 100%; background: linear-gradient(90deg, #4fae5a, #6fd07a); }
+.bar.hp.mid i { background: linear-gradient(90deg, #d0a22e, #e8c25a); }
+.bar.hp.low i { background: linear-gradient(90deg, #c0392b, #e05a4a); }
+.bar.mp i { display: block; height: 100%; background: linear-gradient(90deg, #3f6fd0, #6f9af0); }
+.roster .pc-info .vitals { max-width: 220px; margin-left: auto; margin-right: auto; }
+.summary .s-party { display: grid; gap: 6px; max-width: 320px; margin: 10px auto 4px; text-align: left; }
+.summary .s-hero { display: grid; grid-template-columns: 80px 1fr; align-items: center; gap: 8px; }
+.summary .s-hero b { color: var(--navy); font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.summary .s-hero .vitals { margin: 0; }
+.summary .s-hero.dead .dead-tag { justify-self: start; margin: 0; }
+.summary .risk { margin-top: 12px; }
+.summary .choices { margin: 8px auto 4px; }
+.watch .floorbadge { background: var(--navy); color: #fff3c4; border-color: var(--navy); font-family: 'Silkscreen', ui-monospace, monospace; font-size: 13px; }
+
+/* ===== one scene: the dice roll in a box over the dungeon; the party waits at the stairs until it is revealed ===== */
+.r-overlay.rolling { background: rgba(20, 16, 30, .45); }
+.roll-card { text-align: center; display: flex; flex-direction: column; align-items: center; gap: var(--sp-s); padding-top: var(--sp); }
+.roll-card .winds { gap: 6px; }
+.roll-card .hint-line { margin-top: 2px; }
+/* the short card at the end of a run: what you carry, and the choice */
+.summary.short { padding: calc(var(--sp) * 1.5) var(--sp); }
+.summary.short h2 { margin-bottom: 4px; }
+.s-haul { display: flex; flex-direction: column; align-items: center; margin: 4px 0 8px; }
+.s-haul b { font-family: 'Cinzel', Georgia, serif; font-size: 44px; line-height: 1.1; color: var(--gold); }
+.s-haul span { font-size: 15px; color: var(--dim); }
+.s-haul.lost b { color: #b8302a; }
+.summary.short .choices { margin-top: 10px; }
+
+/* ===== refinements: lone buttons centred, the quest's picture and reward, rank shields, level badge, even bars ===== */
+/* wide screens: as many columns as buttons, so a lone Adventure! sits in the middle */
+@media (min-width: 601px) { .choices { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 1fr; } }
+
+/* today's quest: a live picture of the place with its name in big pixel letters */
+.q-place { position: relative; margin: 0 0 var(--sp-s); }
+.q-place canvas.scene { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+.q-name { position: absolute; left: 8px; right: 8px; bottom: 12px; text-align: center; pointer-events: none; --ol: #1d1626;
+  font-family: 'Silkscreen', ui-monospace, monospace; font-weight: 700; font-size: 24px; line-height: 1.1; color: #fff; letter-spacing: .04em; text-transform: uppercase;
+  text-shadow: 2px 0 var(--ol), -2px 0 var(--ol), 0 2px var(--ol), 0 -2px var(--ol), 2px 2px var(--ol), -2px 2px var(--ol), 2px -2px var(--ol), -2px -2px var(--ol), 0 4px rgba(0, 0, 0, .35); }
+@media (max-width: 420px) { .q-name { font-size: 19px; bottom: 9px; } }
+.quest h3 { margin: var(--sp-s) 0 8px; }
+.q-reward { display: flex; align-items: center; justify-content: center; gap: 14px; }
+.q-pay { display: flex; flex-direction: column; align-items: center; line-height: 1; }
+.q-pay b { font-family: 'Cinzel', Georgia, serif; font-weight: 700; font-size: 38px; color: var(--gold); text-shadow: 0 2px 0 rgba(60, 40, 10, .15); }
+.q-pay span { font-family: 'Silkscreen', ui-monospace, monospace; font-weight: 700; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); margin-top: 3px; }
+.q-for { text-align: left; font-size: 15.5px; font-weight: 700; color: var(--ink); line-height: 1.3; }
+.q-for small { display: block; font-weight: 400; font-size: 13px; color: var(--dim); margin-top: 3px; line-height: 1.45; }
+
+/* the summon: the count under the first-time title, the name floating over the circle, the rank shield */
+.g-title small { display: block; font-family: 'Silkscreen', ui-monospace, monospace; font-size: 13px; letter-spacing: .1em; color: #d8cfb4; margin-top: 2px; }
+.g-info { position: relative; z-index: 1; }
+.g-head .g-shield { flex: none; width: 60px; height: 68px; background: center / 100% 100% no-repeat; image-rendering: pixelated; filter: drop-shadow(0 0 12px var(--rk)); }
+
+/* the next daily summon countdown */
+.summon-bar .cd { font-family: 'Silkscreen', ui-monospace, monospace; color: var(--navy); font-size: 15px; letter-spacing: .04em; }
+
+/* hero cards: a pixel rank shield, a white level badge */
+.pcard .rank-shield { position: absolute; z-index: 1; left: 6px; top: 22px; width: 30px; height: 34px; background: center / 100% 100% no-repeat; image-rendering: pixelated;
+  filter: drop-shadow(0 2px 0 rgba(40, 25, 10, .25)); }
+.pcard.fallen .rank-shield { filter: grayscale(1); opacity: .7; }
+@media (max-width: 699px) { .roster .pcard .rank-shield { top: 6px; left: 6px; } }
+.pc-lvl, .roster .pc-lvl { color: #fff; }
+/* health and mana: the bar centred with the same space on both sides, label and numbers hugging it */
+.vital { grid-template-columns: 46px 1fr 46px; }
+.vital > span { text-align: right; }
+.vital small { min-width: 0; text-align: left; }
+/* the long first-time summon title breaks evenly; the name stays readable over the circle's dots */
+.g-title { text-wrap: balance; }
+.g-head .g-name, .g-head .g-class { text-shadow: 0 2px 6px rgba(0, 0, 0, .85); }
+/* the revealed hero's name and rank sit on a dark pixel nameplate (the buttons' frame), so the circle behind never gets in the way */
+.g-head { border: 12px solid transparent; border-image: var(--pix-rest) 4 fill / 12px stretch; image-rendering: pixelated; padding: 2px 14px 2px 2px; gap: 12px;
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, .45)); }
+.g-head .g-shield { width: 45px; height: 51px; filter: drop-shadow(0 0 10px var(--rk)); }
+.g-head .g-name { font-size: 26px; text-shadow: 0 2px 0 rgba(0, 0, 0, .5); }
+.g-head .g-class { text-shadow: none; }
+.g-head { margin-bottom: 10px; }
+.g-title { position: relative; z-index: 1; }
+/* even 18px gaps on the summon screen (title and card are spaced in drawGacha): under the nameplate, and above the button */
+.g-head { margin-bottom: 14px; }   /* + .g-info's 4px gap = 18px */
+.g-actions { margin-top: 10px; }  /* + .g-inner's 8px gap = 18px */
+/* the even summon gaps grown to 25px */
+.g-head { margin-bottom: 21px; }   /* + .g-info's 4px gap = 25px */
+.g-actions { margin-top: 17px; }  /* + .g-inner's 8px gap = 25px */
+/* the popup over the dungeon is narrow: its choices stack, one full-width button each, so nothing spills out sideways */
+.r-card .choices { display: flex; flex-direction: column; align-items: stretch; gap: 10px; width: 100%; max-width: 320px; margin-left: auto; margin-right: auto; }
+.r-card .choices button.pix { width: 100%; min-width: 0; }
+
+/* go home / go deeper: what each choice means, small under the button's label */
+button.pix small { display: block; font-family: 'Nunito', system-ui, sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0; text-transform: none; line-height: 1.2; margin-top: 3px; opacity: .92; }
+
+/* today's result: replaces today's quest once you went home or the party fell, until the reset */
+.day-result .r-head { font-family: 'Cinzel', Georgia, serif; font-weight: 700; font-size: 21px; text-align: center; margin: var(--sp-s) 0 2px; }
+.day-result .r-head.good { color: var(--good); } .day-result .r-head.death { color: #b8302a; }
+.day-result .r-score { text-align: center; font-size: 15.5px; margin-bottom: var(--sp-s); }
+.day-result .r-score b { font-size: 18px; }
+.r-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 8px 0 var(--sp); }
+.r-stats .r-stat:first-child { grid-column: 1 / -1; }   /* today's renown leads, full width on a phone */
+@media (min-width: 700px) { .r-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); } .r-stats .r-stat:first-child { grid-column: auto; } }
+/* the four result blocks are the headline numbers: framed in gold, big and bold */
+.r-stat { background: linear-gradient(#fffaf0, #f6e8c6); border: 2px solid var(--gold); border-radius: 12px; padding: 12px 6px 10px; text-align: center; min-width: 0;
+  box-shadow: 0 3px 0 rgba(60, 40, 10, .18), inset 0 1px 0 #fff; }
+.r-stat small { display: block; font-family: 'Silkscreen', ui-monospace, monospace; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--navy); }
+.r-stat b { display: block; font-family: 'Cinzel', Georgia, serif; font-weight: 700; font-size: 36px; line-height: 1.15; color: var(--navy); text-shadow: 0 2px 0 rgba(60, 40, 10, .15); }
+.r-stat b.good { color: var(--gold); } .r-stat b.death { color: #b8302a; }
+.r-stat span { display: block; font-size: 12.5px; color: var(--dim); line-height: 1.3; }
+.r-lines { text-align: center; font-size: 15px; display: flex; flex-direction: column; gap: 3px; align-items: center; }
+.day-result .next { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 2px; margin: 4px 0 0;
+  font-family: 'Cinzel', Georgia, serif; font-weight: 700; font-size: 18px; letter-spacing: .08em; text-transform: uppercase; }
+.day-result .next b { font-size: 44px; line-height: 1.05; letter-spacing: .04em; text-shadow: 0 3px 0 rgba(60, 40, 10, .18); }   /* the countdown is the last thing you see: come back then */
+.day-result { text-align: center; }
+/* hero score on each card, and the party's score against other players under the heading */
+.pcard .pc-score { font-size: 12.5px; color: var(--dim); margin-top: 2px; }
+.pcard .pc-score b { font-family: 'Silkscreen', ui-monospace, monospace; color: var(--gold); font-size: 14px; }
+.pcard .pc-score b { font-family: 'Cinzel', Georgia, serif; font-weight: 700; font-size: 15px; }
+/* Today's party: the score is the headline, big and gold, with how it compares under it */
+.party-score { display: flex; flex-direction: column; align-items: center; margin: 2px 0 var(--sp-s); color: var(--ink); text-align: center; }
+.party-score small { font-family: 'Cinzel', Georgia, serif; font-weight: 700; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
+.party-score b { font-family: 'Cinzel', Georgia, serif; font-weight: 700; font-size: 60px; line-height: 1.05; color: var(--gold); text-shadow: 0 3px 0 rgba(60, 40, 10, .22); }
+.party-score span { font-size: 14.5px; }
+/* after the roll: three plain lines, the roll, the party, the chance */
+.readout { display: flex; flex-direction: column; align-items: stretch; gap: 2px; width: 100%; max-width: 300px; }
+.ro-line { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 16px; color: var(--ink); border-bottom: 1px dashed rgba(60, 40, 10, .2); padding: 2px 0; }
+.ro-line b { font-family: 'Cinzel', Georgia, serif; font-weight: 700; font-size: 26px; color: var(--navy); }
+.ro-odds { margin-top: 8px; text-align: center; font-size: 16px; color: var(--ink); }
+.ro-odds b { display: block; font-family: 'Cinzel', Georgia, serif; font-weight: 700; font-size: 54px; line-height: 1.05; text-shadow: 0 3px 0 rgba(60, 40, 10, .18); }
+.ro-odds b.low { color: #b8302a; } .ro-odds b.mid { color: #c9771a; } .ro-odds b.high { color: #3d8a4a; }
+
+/* leaderboard screen */
+.board .b-tabs { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin: 4px 0 var(--sp); }
+.b-table { display: flex; flex-direction: column; }
+.b-row { display: grid; grid-template-columns: 1.6em minmax(0, 1fr) 4em 3.9em 4.4em; gap: 4px; align-items: baseline; padding: 6px 4px; border-bottom: 1px dashed rgba(90, 66, 30, .15); font-size: 15px; }
+.b-row .n { color: var(--dim); text-align: right; } .b-row .who { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.b-row .ps, .b-row .dp, .b-row .rn { text-align: right; font-family: 'Cinzel', Georgia, serif; font-weight: 700; }
+.b-row .rn { color: var(--gold); }
+.b-row.b-top { font-size: 12px; line-height: 1.15; color: var(--dim); align-items: end; font-weight: 700; }   /* plain font: narrow enough to wrap inside each column */
+.b-row.b-top .ps, .b-row.b-top .dp, .b-row.b-top .rn { font-family: inherit; font-weight: 700; color: var(--dim); }
+@media (min-width: 700px) { .b-row { grid-template-columns: 2.2em minmax(0, 1fr) 7em 7em 7em; } }
+.b-row.you { background: rgba(224, 168, 46, .18); border-radius: 8px; font-weight: 700; }
+.board .b-note { display: block; text-align: center; margin-top: var(--sp-s); }
+
+/* one day panel: place, today's party, then the Adventure! button. Every element is the same distance from the next
+   (the panel's own padding), so the panel reads at an even tempo top to bottom */
+.panel.quest, .panel.quest .q-party { display: flex; flex-direction: column; gap: var(--sp); }
+.panel.quest h2, .panel.quest .q-place, .panel.quest .q-party, .panel.quest .party-score, .panel.quest .summon-bar,
+.panel.quest .decide { margin: 0; }
+.panel.quest .pgrid { margin: 0 auto; width: 100%; }   /* keep the hero grid centred (it is at most 640px wide on big screens) */
+.panel.quest .summon-bar.first { padding: 0; }
+.quest .q-party .pgrid { text-align: left; }
+/* today's quest name, for flavour: big, under the picture */
+.panel.quest .q-title { font-family: 'Cinzel', Georgia, serif; font-weight: 700; font-size: 24px; line-height: 1.25; color: var(--navy); text-align: center;
+  text-wrap: balance; text-shadow: 0 2px 0 rgba(60, 40, 10, .12); }
+@media (min-width: 700px) { .panel.quest .q-title { font-size: 30px; } }
+.b-table.two .b-row { grid-template-columns: 1.6em minmax(0, 1fr) 5em 5em; }   /* Deepest adventures: room and day only */
